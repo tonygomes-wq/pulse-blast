@@ -8,10 +8,22 @@ export function cn(...inputs: ClassValue[]) {
 export function sanitizeWhatsappNumber(number: string): string {
   if (!number) return "";
   const trimmed = number.trim();
+
+  // If it's a group ID, return as is.
   if (trimmed.endsWith("@g.us")) {
-    // It's a group ID, keep it as is
     return trimmed;
   }
-  // It's a regular number, remove all non-digit characters
-  return trimmed.replace(/\D/g, "");
+
+  // If it's a contact ID already, return as is.
+  if (trimmed.endsWith("@c.us")) {
+    return trimmed;
+  }
+
+  // Otherwise, assume it's a plain number. Clean it and add the suffix.
+  const digitsOnly = trimmed.replace(/\D/g, "");
+  if (digitsOnly) {
+    return `${digitsOnly}@c.us`;
+  }
+
+  return ""; // Return empty if no digits found
 }
