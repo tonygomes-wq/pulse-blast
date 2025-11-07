@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="flex items-center">
-                <Logo className="h-10" />
+                <Logo className="h-12" />
               </Link>
               <div className="hidden md:flex space-x-4">
                 {menuItems.map((item) => {

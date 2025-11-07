@@ -79,7 +79,7 @@ export default function Auth() {
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
-            <Logo className="h-20" />
+            <Logo className="h-24" />
           </div>
         </CardHeader>
         <CardContent>
