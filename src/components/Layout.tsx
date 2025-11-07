@@ -71,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
                 <div className="p-2 bg-primary rounded-lg">
                   <MessageCircle className="h-5 w-5 text-primary-foreground" />
                 </div>
-                <span className="font-bold text-lg">WhatsApp Sender</span>
+                <span className="font-bold text-lg">WatsMacip</span>
               </Link>
               <div className="hidden md:flex space-x-4">
                 {menuItems.map((item) => {
