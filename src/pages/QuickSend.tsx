@@ -106,7 +106,7 @@ export default function QuickSend() {
     for (const contact of recipients) {
       const personalizedMessage = message.replace(/\{\{nome\}\}/g, contact.name || "");
       sendPromises.push(
-        supabase.functions.invoke('send-whatsapp-message', {
+        supabase.functions.invoke('whatsappProxy', {
           body: {
             settings,
             number: sanitizeWhatsappNumber(contact.whatsapp),
@@ -127,7 +127,7 @@ export default function QuickSend() {
     if (manualNumber.trim()) {
       const genericMessage = message.replace(/\{\{nome\}\}/g, "");
       sendPromises.push(
-        supabase.functions.invoke('send-whatsapp-message', {
+        supabase.functions.invoke('whatsappProxy', {
           body: {
             settings,
             number: sanitizeWhatsappNumber(manualNumber),

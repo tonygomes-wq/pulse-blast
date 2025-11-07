@@ -68,7 +68,7 @@ export default function CampaignDetail() {
       await supabase.from("campaign_messages").update({ status: "sending" }).eq("id", msg.id);
 
       try {
-        const { error: invokeError } = await supabase.functions.invoke('send-whatsapp-message', {
+        const { error: invokeError } = await supabase.functions.invoke('whatsappProxy', {
           body: {
             settings,
             number: sanitizeWhatsappNumber(msg.contact.whatsapp),
