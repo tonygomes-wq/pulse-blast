@@ -2,10 +2,9 @@ import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Users, Tags, Send, LogOut, User, Settings as SettingsIcon, MessageSquarePlus } from "lucide-react";
+import { Users, Tags, Send, LogOut, User, Settings as SettingsIcon, MessageSquarePlus, LayoutDashboard } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
-import { LogoIcon } from "@/components/LogoIcon";
 
 interface LayoutProps {
   children: ReactNode;
@@ -57,7 +56,7 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   const menuItems = [
-    { path: "/dashboard", icon: LogoIcon, label: "Dashboard" },
+    { path: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
     { path: "/contacts", icon: Users, label: "Contatos" },
     { path: "/categories", icon: Tags, label: "Categorias" },
     { path: "/campaigns", icon: Send, label: "Campanhas" },
@@ -71,9 +70,8 @@ export default function Layout({ children }: LayoutProps) {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
-              <Link to="/dashboard" className="flex items-center space-x-2">
-                <Logo className="h-8 w-8" />
-                <span className="font-bold text-lg">MAC-IP</span>
+              <Link to="/dashboard" className="flex items-center">
+                <Logo className="h-10" />
               </Link>
               <div className="hidden md:flex space-x-4">
                 {menuItems.map((item) => {
