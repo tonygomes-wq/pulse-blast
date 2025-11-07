@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Users, Tags, Send, LogOut, User, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 import { Logo } from "@/components/Logo";
+import { LogoIcon } from "@/components/LogoIcon";
 
 interface LayoutProps {
   children: ReactNode;
@@ -56,7 +57,7 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   const menuItems = [
-    { path: "/dashboard", icon: Logo, label: "Dashboard" },
+    { path: "/dashboard", icon: LogoIcon, label: "Dashboard" },
     { path: "/contacts", icon: Users, label: "Contatos" },
     { path: "/categories", icon: Tags, label: "Categorias" },
     { path: "/campaigns", icon: Send, label: "Campanhas" },
@@ -70,9 +71,7 @@ export default function Layout({ children }: LayoutProps) {
           <div className="flex justify-between h-16">
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="flex items-center space-x-2">
-                <div className="p-2 bg-primary rounded-lg">
-                  <Logo className="h-5 w-5 text-primary-foreground" />
-                </div>
+                <Logo className="h-8 w-8" />
                 <span className="font-bold text-lg">WatsMacip</span>
               </Link>
               <div className="hidden md:flex space-x-4">
