@@ -124,8 +124,8 @@ export default function NewCampaign() {
 
     const { data: newCampaignId, error } = await supabase.rpc('create_campaign_with_messages', {
       campaign_name: campaignName,
-      message_template: message,
-      contacts: contactsForRPC
+      contacts: contactsForRPC,
+      message_template: message
     });
 
     setLoading(false);
