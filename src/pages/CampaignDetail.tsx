@@ -61,11 +61,6 @@ export default function CampaignDetail() {
       return;
     }
 
-    let apiUrl = settings.url.replace(/\/$/, "");
-    if (apiUrl.startsWith("http://")) {
-      apiUrl = apiUrl.replace("http://", "https://");
-    }
-    const encodedInstance = encodeURIComponent(settings.instance);
     const pendingMessages = messages.filter(m => m.status === "pending");
     
     for (let i = 0; i < pendingMessages.length; i++) {
@@ -73,21 +68,16 @@ export default function CampaignDetail() {
       await supabase.from("campaign_messages").update({ status: "sending" }).eq("id", msg.id);
 
       try {
-        const response = await fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'apikey': settings.apiKey,
-          },
-          body: JSON.stringify({
+        const { error: invokeError } = await supabase.functions.invoke('send-message', {
+          body: {
+            settings,
             number: sanitizeWhatsappNumber(msg.contact.whatsapp),
             textMessage: { text: msg.message_content },
-          }),
+          },
         });
 
-        if (!response.ok) {
-          const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
-          throw new Error(errorData.message || `Erro ${response.status}`);
+        if (invokeError) {
+          throw new Error(invokeError.message);
         }
 
         await supabase.from("campaign_messages").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", msg.id);

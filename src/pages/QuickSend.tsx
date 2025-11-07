@@ -98,40 +98,27 @@ export default function QuickSend() {
       return;
     }
 
-    let apiUrl = settings.url.replace(/\/$/, "");
-    if (apiUrl.startsWith("http://")) {
-      apiUrl = apiUrl.replace("http://", "https://");
-    }
-    const encodedInstance = encodeURIComponent(settings.instance);
     let successCount = 0;
     let errorCount = 0;
-
     const sendPromises = [];
 
     // Enviar para contatos selecionados
     for (const contact of recipients) {
       const personalizedMessage = message.replace(/\{\{nome\}\}/g, contact.name || "");
       sendPromises.push(
-        fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
-          body: JSON.stringify({
+        supabase.functions.invoke('send-message', {
+          body: {
+            settings,
             number: sanitizeWhatsappNumber(contact.whatsapp),
             textMessage: { text: personalizedMessage },
-          }),
-        }).then(async response => {
-          if (response.ok) {
-            successCount++;
-          } else {
+          },
+        }).then(({ error }) => {
+          if (error) {
             errorCount++;
-            const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
-            const errorMessage = errorData.message || `Erro ${response.status}`;
-            toast.error(`Falha ao enviar para ${contact.name || contact.whatsapp}: ${errorMessage}`);
+            toast.error(`Falha ao enviar para ${contact.name || contact.whatsapp}: ${error.message}`);
+          } else {
+            successCount++;
           }
-        }).catch((err) => {
-          errorCount++;
-          console.error(err);
-          toast.error(`Erro de conexão ao enviar para ${contact.name || contact.whatsapp}`);
         })
       );
     }
@@ -140,26 +127,19 @@ export default function QuickSend() {
     if (manualNumber.trim()) {
       const genericMessage = message.replace(/\{\{nome\}\}/g, "");
       sendPromises.push(
-        fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
-          body: JSON.stringify({
+        supabase.functions.invoke('send-message', {
+          body: {
+            settings,
             number: sanitizeWhatsappNumber(manualNumber),
             textMessage: { text: genericMessage },
-          }),
-        }).then(async response => {
-          if (response.ok) {
-            successCount++;
-          } else {
+          },
+        }).then(({ error }) => {
+          if (error) {
             errorCount++;
-            const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
-            const errorMessage = errorData.message || `Erro ${response.status}`;
-            toast.error(`Falha ao enviar para ${manualNumber.trim()}: ${errorMessage}`);
+            toast.error(`Falha ao enviar para ${manualNumber.trim()}: ${error.message}`);
+          } else {
+            successCount++;
           }
-        }).catch((err) => {
-          errorCount++;
-          console.error(err);
-          toast.error(`Erro de conexão ao enviar para ${manualNumber.trim()}`);
         })
       );
     }
