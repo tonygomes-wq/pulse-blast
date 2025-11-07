@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "sonner";
 import { ArrowLeft, Play, CheckCircle2, XCircle, Clock } from "lucide-react";
 import Confetti from "react-confetti";
+import { sanitizeWhatsappNumber } from "@/lib/utils";
 
 export default function CampaignDetail() {
   const { id } = useParams();
@@ -76,7 +77,7 @@ export default function CampaignDetail() {
             'apikey': settings.apiKey,
           },
           body: JSON.stringify({
-            number: msg.contact.whatsapp,
+            number: sanitizeWhatsappNumber(msg.contact.whatsapp),
             textMessage: { text: msg.message_content },
           }),
         });

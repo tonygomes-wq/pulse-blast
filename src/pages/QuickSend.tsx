@@ -10,6 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { Users, MessageCircle, Send, Search } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { sanitizeWhatsappNumber } from "@/lib/utils";
 
 interface Contact {
   id: string;
@@ -112,7 +113,7 @@ export default function QuickSend() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
           body: JSON.stringify({
-            number: contact.whatsapp,
+            number: sanitizeWhatsappNumber(contact.whatsapp),
             textMessage: { text: personalizedMessage },
           }),
         }).then(async response => {
@@ -140,7 +141,7 @@ export default function QuickSend() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
           body: JSON.stringify({
-            number: manualNumber.trim(),
+            number: sanitizeWhatsappNumber(manualNumber),
             textMessage: { text: genericMessage },
           }),
         }).then(async response => {
