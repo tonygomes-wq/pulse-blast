@@ -10,7 +10,7 @@ import { Save } from "lucide-react";
 const SETTINGS_KEY = "evolution-api-settings";
 
 const defaultSettings = {
-  url: "http://whatsmacip.macip.com.br:8080",
+  url: "https://whatsmacip.macip.com.br",
   apiKey: "4DAEB69B7F7A-47B2-AD0D-E29E3262AE1D",
   instance: "CELULAR MACIP",
 };
@@ -62,7 +62,7 @@ export default function Settings() {
                 <Input
                   id="url"
                   type="url"
-                  placeholder="http://localhost:8080"
+                  placeholder="https://whatsmacip.macip.com.br"
                   value={settings.url}
                   onChange={handleChange}
                   required
