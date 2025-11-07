@@ -2,7 +2,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Users, Tags, Send, LogOut, User } from "lucide-react";
+import { MessageCircle, Users, Tags, Send, LogOut, User, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
 
 interface LayoutProps {
@@ -59,6 +59,7 @@ export default function Layout({ children }: LayoutProps) {
     { path: "/contacts", icon: Users, label: "Contatos" },
     { path: "/categories", icon: Tags, label: "Categorias" },
     { path: "/campaigns", icon: Send, label: "Campanhas" },
+    { path: "/settings", icon: SettingsIcon, label: "Configurações" },
   ];
 
   return (
@@ -76,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="hidden md:flex space-x-4">
                 {menuItems.map((item) => {
                   const Icon = item.icon;
-                  const isActive = location.pathname === item.path;
+                  const isActive = location.pathname.startsWith(item.path);
                   return (
                     <Link
                       key={item.path}

@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import Layout from "@/components/Layout";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import { ArrowLeft, Play, CheckCircle2, XCircle, Clock } from "lucide-react";
 import Confetti from "react-confetti";
@@ -15,7 +14,6 @@ export default function CampaignDetail() {
   const [campaign, setCampaign] = useState<any>(null);
   const [messages, setMessages] = useState<any[]>([]);
   const [running, setRunning] = useState(false);
-  const [currentProgress, setCurrentProgress] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
 
   useEffect(() => {
@@ -49,30 +47,55 @@ export default function CampaignDetail() {
     setRunning(true);
     await supabase.from("campaigns").update({ status: "running", started_at: new Date().toISOString() }).eq("id", id);
 
+    const settingsStr = localStorage.getItem("evolution-api-settings");
+    if (!settingsStr) {
+      toast.error("Credenciais da API não configuradas. Vá para a página de Configurações.");
+      setRunning(false);
+      return;
+    }
+    const settings = JSON.parse(settingsStr);
+    if (!settings.url || !settings.apiKey || !settings.instance) {
+      toast.error("Configure a URL, Chave de API e Instância da API na página de Configurações.");
+      setRunning(false);
+      return;
+    }
+
     const pendingMessages = messages.filter(m => m.status === "pending");
     
     for (let i = 0; i < pendingMessages.length; i++) {
       const msg = pendingMessages[i];
-      const delay = Math.random() * 8000 + 2000;
-      
-      setCurrentProgress((delay / 10000) * 100);
       await supabase.from("campaign_messages").update({ status: "sending" }).eq("id", msg.id);
-      
-      await new Promise(resolve => {
-        let elapsed = 0;
-        const interval = setInterval(() => {
-          elapsed += 100;
-          setCurrentProgress((elapsed / delay) * 100);
-          if (elapsed >= delay) {
-            clearInterval(interval);
-            resolve(null);
-          }
-        }, 100);
-      });
 
-      await supabase.from("campaign_messages").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", msg.id);
-      await supabase.from("campaigns").update({ sent_count: i + 1 }).eq("id", id);
-      setCurrentProgress(0);
+      try {
+        const response = await fetch(`${settings.url}/message/sendText/${settings.instance}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': settings.apiKey,
+          },
+          body: JSON.stringify({
+            number: msg.contact.whatsapp,
+            textMessage: { text: msg.message_content },
+          }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
+          throw new Error(errorData.message || `Erro ${response.status}`);
+        }
+
+        await supabase.from("campaign_messages").update({ status: "sent", sent_at: new Date().toISOString() }).eq("id", msg.id);
+        await supabase.from("campaigns").update({ sent_count: (campaign.sent_count || 0) + 1 }).eq("id", id);
+
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : "Erro de conexão";
+        await supabase.from("campaign_messages").update({ status: "failed", error_message: errorMessage }).eq("id", msg.id);
+        await supabase.from("campaigns").update({ failed_count: (campaign.failed_count || 0) + 1 }).eq("id", id);
+        toast.error(`Falha ao enviar para ${msg.contact.whatsapp}`);
+      }
+      
+      const delay = Math.random() * 4000 + 2000; // 2-6s delay
+      await new Promise(resolve => setTimeout(resolve, delay));
     }
 
     await supabase.from("campaigns").update({ status: "completed", completed_at: new Date().toISOString() }).eq("id", id);
@@ -106,7 +129,7 @@ export default function CampaignDetail() {
             <div>
               <h1 className="text-3xl font-bold">{campaign.name}</h1>
               <p className="text-muted-foreground mt-1">
-                {campaign.sent_count} de {campaign.total_contacts} enviados
+                {campaign.sent_count || 0} de {campaign.total_contacts} enviados
               </p>
             </div>
           </div>
@@ -130,13 +153,11 @@ export default function CampaignDetail() {
                   <div className="flex-1">
                     <div className="font-medium">{msg.contact?.name || "Sem nome"}</div>
                     <div className="text-sm text-muted-foreground font-mono">{msg.contact?.whatsapp}</div>
+                    {msg.status === 'failed' && msg.error_message && (
+                      <p className="text-xs text-destructive mt-1">{msg.error_message}</p>
+                    )}
                   </div>
-                  {msg.status === "sending" && (
-                    <div className="w-32">
-                      <Progress value={currentProgress} className="h-2" />
-                    </div>
-                  )}
-                  <div className="text-sm text-muted-foreground capitalize">{msg.status === "sent" ? "Enviado" : msg.status === "sending" ? "Enviando" : "Aguardando"}</div>
+                  <div className="text-sm text-muted-foreground capitalize">{msg.status === "sent" ? "Enviado" : msg.status === "sending" ? "Enviando" : msg.status === "failed" ? "Falhou" : "Aguardando"}</div>
                 </div>
               ))}
             </div>
