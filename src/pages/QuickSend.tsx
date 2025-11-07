@@ -98,7 +98,10 @@ export default function QuickSend() {
       return;
     }
 
-    const apiUrl = settings.url.replace(/\/$/, "");
+    let apiUrl = settings.url.replace(/\/$/, "");
+    if (apiUrl.startsWith("http://")) {
+      apiUrl = apiUrl.replace("http://", "https://");
+    }
     const encodedInstance = encodeURIComponent(settings.instance);
     let successCount = 0;
     let errorCount = 0;

@@ -61,7 +61,10 @@ export default function CampaignDetail() {
       return;
     }
 
-    const apiUrl = settings.url.replace(/\/$/, "");
+    let apiUrl = settings.url.replace(/\/$/, "");
+    if (apiUrl.startsWith("http://")) {
+      apiUrl = apiUrl.replace("http://", "https://");
+    }
     const encodedInstance = encodeURIComponent(settings.instance);
     const pendingMessages = messages.filter(m => m.status === "pending");
     
