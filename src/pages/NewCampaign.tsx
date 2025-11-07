@@ -123,6 +123,7 @@ export default function NewCampaign() {
         message_template: message,
         total_contacts: selectedContacts.size,
         user_id: user.id,
+        status: "draft",
       })
       .select()
       .single();
@@ -141,6 +142,7 @@ export default function NewCampaign() {
         campaign_id: campaign.id,
         contact_id: contact.id,
         message_content: personalizedMessage,
+        status: "pending",
       };
     });
 
