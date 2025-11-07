@@ -129,7 +129,8 @@ export default function NewCampaign() {
       .single();
 
     if (campaignError) {
-      toast.error("Erro ao criar campanha");
+      console.error("Erro ao criar campanha:", campaignError);
+      toast.error("Erro ao criar campanha. Verifique o console para mais detalhes.");
       setLoading(false);
       return;
     }
@@ -151,7 +152,8 @@ export default function NewCampaign() {
       .insert(messages);
 
     if (messagesError) {
-      toast.error("Erro ao criar mensagens");
+      console.error("Erro ao criar mensagens:", messagesError);
+      toast.error("Erro ao criar mensagens. Verifique o console para mais detalhes.");
       setLoading(false);
       return;
     }
