@@ -2,8 +2,9 @@ import { ReactNode, useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Users, Tags, Send, LogOut, User, Settings as SettingsIcon } from "lucide-react";
+import { Users, Tags, Send, LogOut, User, Settings as SettingsIcon } from "lucide-react";
 import { toast } from "sonner";
+import { Logo } from "@/components/Logo";
 
 interface LayoutProps {
   children: ReactNode;
@@ -55,7 +56,7 @@ export default function Layout({ children }: LayoutProps) {
   }
 
   const menuItems = [
-    { path: "/dashboard", icon: MessageCircle, label: "Dashboard" },
+    { path: "/dashboard", icon: Logo, label: "Dashboard" },
     { path: "/contacts", icon: Users, label: "Contatos" },
     { path: "/categories", icon: Tags, label: "Categorias" },
     { path: "/campaigns", icon: Send, label: "Campanhas" },
@@ -70,7 +71,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="flex items-center space-x-2">
                 <div className="p-2 bg-primary rounded-lg">
-                  <MessageCircle className="h-5 w-5 text-primary-foreground" />
+                  <Logo className="h-5 w-5 text-primary-foreground" />
                 </div>
                 <span className="font-bold text-lg">WatsMacip</span>
               </Link>

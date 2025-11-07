@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { MessageCircle } from "lucide-react";
+import { Logo } from "@/components/Logo";
 
 export default function Auth() {
   const navigate = useNavigate();
@@ -80,7 +80,7 @@ export default function Auth() {
         <CardHeader className="space-y-1 text-center">
           <div className="flex justify-center mb-4">
             <div className="p-3 bg-primary rounded-full">
-              <MessageCircle className="h-8 w-8 text-primary-foreground" />
+              <Logo className="h-8 w-8 text-primary-foreground" />
             </div>
           </div>
           <CardTitle className="text-2xl font-bold">WatsMacip</CardTitle>
