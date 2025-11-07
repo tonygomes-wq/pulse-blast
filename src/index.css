@@ -17,7 +17,7 @@ All colors MUST be HSL.
     --popover: 0 0% 100%;
     --popover-foreground: 240 10% 3.9%;
 
-    --primary: 180 89% 32%;
+    --primary: 142 76% 49%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 240 4.8% 95.9%;
@@ -26,15 +26,15 @@ All colors MUST be HSL.
     --muted: 240 4.8% 95.9%;
     --muted-foreground: 240 3.8% 46.1%;
 
-    --accent: 196 74% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 5.9% 90%;
     --input: 240 5.9% 90%;
-    --ring: 180 89% 32%;
+    --ring: 142 76% 49%;
 
     --radius: 0.75rem;
 
@@ -47,9 +47,9 @@ All colors MUST be HSL.
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    --whatsapp: 180 89% 32%;
-    --whatsapp-light: 180 89% 96%;
-    --whatsapp-dark: 180 89% 22%;
+    --whatsapp: 142 76% 49%;
+    --whatsapp-light: 142 76% 96%;
+    --whatsapp-dark: 142 76% 39%;
   }
 
   .dark {
@@ -62,7 +62,7 @@ All colors MUST be HSL.
     --popover: 240 10% 3.9%;
     --popover-foreground: 0 0% 98%;
 
-    --primary: 180 89% 32%;
+    --primary: 142 76% 49%;
     --primary-foreground: 0 0% 100%;
 
     --secondary: 240 3.7% 15.9%;
@@ -71,15 +71,15 @@ All colors MUST be HSL.
     --muted: 240 3.7% 15.9%;
     --muted-foreground: 240 5% 64.9%;
 
-    --accent: 196 74% 55%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 240 3.7% 15.9%;
     --input: 240 3.7% 15.9%;
-    --ring: 180 89% 32%;
+    --ring: 142 76% 49%;
 
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
@@ -90,9 +90,9 @@ All colors MUST be HSL.
     --info: 199 89% 48%;
     --info-foreground: 0 0% 100%;
 
-    --whatsapp: 180 89% 32%;
-    --whatsapp-light: 180 89% 16%;
-    --whatsapp-dark: 180 89% 42%;
+    --whatsapp: 142 76% 49%;
+    --whatsapp-light: 142 76% 16%;
+    --whatsapp-dark: 142 76% 59%;
   }
 }
 
