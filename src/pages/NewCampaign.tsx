@@ -112,54 +112,32 @@ export default function NewCampaign() {
     }
 
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
 
-    // Create campaign
-    const { data: campaign, error: campaignError } = await supabase
-      .from("campaigns")
-      .insert({
-        name: campaignName,
-        message_template: message,
-        total_contacts: selectedContacts.size,
-        user_id: user.id,
-        status: "draft",
-      })
-      .select()
-      .single();
-
-    if (campaignError) {
-      console.error("Erro ao criar campanha:", campaignError);
-      toast.error("Erro ao criar campanha. Verifique o console para mais detalhes.");
-      setLoading(false);
-      return;
-    }
-
-    // Create campaign messages
     const selectedContactsList = contacts.filter(c => selectedContacts.has(c.id));
-    const messages = selectedContactsList.map(contact => {
+    const contactsForRPC = selectedContactsList.map(contact => {
       const personalizedMessage = message.replace(/\{\{nome\}\}/g, contact.name || "");
       return {
-        campaign_id: campaign.id,
         contact_id: contact.id,
         message_content: personalizedMessage,
-        status: "pending",
       };
     });
 
-    const { error: messagesError } = await supabase
-      .from("campaign_messages")
-      .insert(messages);
+    const { data: newCampaignId, error } = await supabase.rpc('create_campaign_with_messages', {
+      campaign_name: campaignName,
+      message_template: message,
+      contacts: contactsForRPC
+    });
 
-    if (messagesError) {
-      console.error("Erro ao criar mensagens:", messagesError);
-      toast.error("Erro ao criar mensagens. Verifique o console para mais detalhes.");
-      setLoading(false);
+    setLoading(false);
+
+    if (error) {
+      console.error("Erro ao criar campanha:", error);
+      toast.error("Erro ao criar campanha. Verifique o console para mais detalhes.");
       return;
     }
 
     toast.success("Campanha criada com sucesso!");
-    navigate(`/campaigns/${campaign.id}`);
+    navigate(`/campaigns/${newCampaignId}`);
   };
 
   return (
