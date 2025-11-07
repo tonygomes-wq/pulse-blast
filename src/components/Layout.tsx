@@ -72,7 +72,7 @@ export default function Layout({ children }: LayoutProps) {
             <div className="flex items-center space-x-8">
               <Link to="/dashboard" className="flex items-center space-x-2">
                 <Logo className="h-8 w-8" />
-                <span className="font-bold text-lg">WatsMacip</span>
+                <span className="font-bold text-lg">MAC-IP</span>
               </Link>
               <div className="hidden md:flex space-x-4">
                 {menuItems.map((item) => {

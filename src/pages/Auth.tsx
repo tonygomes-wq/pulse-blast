@@ -81,9 +81,9 @@ export default function Auth() {
           <div className="flex justify-center mb-4">
             <Logo className="h-16 w-16" />
           </div>
-          <CardTitle className="text-2xl font-bold">WatsMacip</CardTitle>
+          <CardTitle className="text-2xl font-bold">MAC-IP</CardTitle>
           <CardDescription>
-            Sistema de disparo em massa de WhatsApp
+            Tecnologia para disparo em massa
           </CardDescription>
         </CardHeader>
         <CardContent>
