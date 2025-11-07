@@ -60,6 +60,8 @@ export default function CampaignDetail() {
       return;
     }
 
+    const apiUrl = settings.url.replace(/\/$/, "");
+    const encodedInstance = encodeURIComponent(settings.instance);
     const pendingMessages = messages.filter(m => m.status === "pending");
     
     for (let i = 0; i < pendingMessages.length; i++) {
@@ -67,7 +69,7 @@ export default function CampaignDetail() {
       await supabase.from("campaign_messages").update({ status: "sending" }).eq("id", msg.id);
 
       try {
-        const response = await fetch(`${settings.url}/message/sendText/${settings.instance}`, {
+        const response = await fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

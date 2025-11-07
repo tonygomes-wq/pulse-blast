@@ -97,6 +97,8 @@ export default function QuickSend() {
       return;
     }
 
+    const apiUrl = settings.url.replace(/\/$/, "");
+    const encodedInstance = encodeURIComponent(settings.instance);
     let successCount = 0;
     let errorCount = 0;
 
@@ -106,21 +108,25 @@ export default function QuickSend() {
     for (const contact of recipients) {
       const personalizedMessage = message.replace(/\{\{nome\}\}/g, contact.name || "");
       sendPromises.push(
-        fetch(`${settings.url}/message/sendText/${settings.instance}`, {
+        fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
           body: JSON.stringify({
             number: contact.whatsapp,
             textMessage: { text: personalizedMessage },
           }),
-        }).then(response => {
-          if (response.ok) successCount++;
-          else {
+        }).then(async response => {
+          if (response.ok) {
+            successCount++;
+          } else {
             errorCount++;
-            toast.error(`Falha ao enviar para ${contact.name || contact.whatsapp}`);
+            const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
+            const errorMessage = errorData.message || `Erro ${response.status}`;
+            toast.error(`Falha ao enviar para ${contact.name || contact.whatsapp}: ${errorMessage}`);
           }
-        }).catch(() => {
+        }).catch((err) => {
           errorCount++;
+          console.error(err);
           toast.error(`Erro de conexão ao enviar para ${contact.name || contact.whatsapp}`);
         })
       );
@@ -130,21 +136,25 @@ export default function QuickSend() {
     if (manualNumber.trim()) {
       const genericMessage = message.replace(/\{\{nome\}\}/g, "");
       sendPromises.push(
-        fetch(`${settings.url}/message/sendText/${settings.instance}`, {
+        fetch(`${apiUrl}/message/sendText/${encodedInstance}`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'apikey': settings.apiKey },
           body: JSON.stringify({
             number: manualNumber.trim(),
             textMessage: { text: genericMessage },
           }),
-        }).then(response => {
-          if (response.ok) successCount++;
-          else {
+        }).then(async response => {
+          if (response.ok) {
+            successCount++;
+          } else {
             errorCount++;
-            toast.error(`Falha ao enviar para ${manualNumber.trim()}`);
+            const errorData = await response.json().catch(() => ({ message: "Erro desconhecido na API" }));
+            const errorMessage = errorData.message || `Erro ${response.status}`;
+            toast.error(`Falha ao enviar para ${manualNumber.trim()}: ${errorMessage}`);
           }
-        }).catch(() => {
+        }).catch((err) => {
           errorCount++;
+          console.error(err);
           toast.error(`Erro de conexão ao enviar para ${manualNumber.trim()}`);
         })
       );
