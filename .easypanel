@@ -1,0 +1,51 @@
+# EasyPanel Configuration
+# This file helps configure the project deployment on EasyPanel
+
+## Services Configuration
+
+### 1. MySQL Database
+# Service Name: pulse-blast-db
+# Type: MySQL 8.0
+# Database Name: pulse_blast
+# Username: pulse_user
+# Password: <generate-strong-password>
+
+### 2. Backend API (Node.js)
+# Service Name: pulse-blast-api
+# Type: App
+# Source: Git Repository
+# Build Method: Nixpacks
+# Build Path: /backend
+# Port: 3001
+# Environment Variables:
+#   DB_HOST=pulse-blast-db
+#   DB_USER=pulse_user
+#   DB_PASSWORD=<mysql-password>
+#   DB_NAME=pulse_blast
+#   DB_PORT=3306
+#   JWT_SECRET=<generate-random-32-byte-hex>
+#   PORT=3001
+#   NODE_ENV=production
+#   FRONTEND_URL=https://<your-frontend-domain>
+
+### 3. Frontend (React)
+# Service Name: pulse-blast-frontend
+# Type: App
+# Source: Git Repository
+# Build Method: Nixpacks
+# Build Path: / (root)
+# Port: 3000
+# Environment Variables:
+#   VITE_API_URL=https://<your-backend-domain>/api
+
+## Database Schema Setup
+# After creating MySQL service:
+# 1. Access phpMyAdmin or MySQL CLI
+# 2. Run the SQL from: backend/database/schema.sql
+
+## Domain Configuration
+# Backend: api.yourdomain.com -> pulse-blast-api:3001
+# Frontend: yourdomain.com -> pulse-blast-frontend:3000
+
+## Auto-Deploy
+# Push to main branch triggers automatic deployment

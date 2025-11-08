@@ -1,0 +1,14 @@
+[phases.setup]
+nixPkgs = ["nodejs_18", "nginx"]
+
+[phases.install]
+cmds = ["npm ci"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "nginx -g 'daemon off;' -c /workspace/nginx.conf"
+
+[variables]
+NODE_ENV = "production"
