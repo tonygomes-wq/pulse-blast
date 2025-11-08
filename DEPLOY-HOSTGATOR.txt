@@ -1,0 +1,271 @@
+╔══════════════════════════════════════════════════════════════════╗
+║          GUIA DE DEPLOY PARA HOSTGATOR - PULSE BLAST             ║
+╚══════════════════════════════════════════════════════════════════╝
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 1: CONFIGURAR BANCO DE DADOS MYSQL
+═══════════════════════════════════════════════════════════════════
+
+1. Entre no cPanel da Hostgator
+2. Abra "phpMyAdmin"
+3. Clique no banco "faceso56_wats" na barra lateral
+4. Clique na aba "SQL"
+5. Abra o arquivo: backend/database/schema.sql
+6. Copie TODO o conteúdo
+7. Cole no phpMyAdmin e clique "Executar"
+
+✅ PRONTO! Tabelas criadas:
+   - users
+   - contacts
+   - categories
+   - contact_categories
+   - campaigns
+   - campaign_messages
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 2: CONFIGURAR ARQUIVOS .ENV
+═══════════════════════════════════════════════════════════════════
+
+A. BACKEND (.env)
+-----------------
+Arquivo: backend/.env
+
+✏️ EDITE AS SEGUINTES LINHAS:
+
+Linha 9 - JWT_SECRET:
+   TROQUE POR: Uma string aleatória longa e segura
+   Exemplo: Use este comando no terminal para gerar:
+   node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
+
+Linha 16 - FRONTEND_URL:
+   TROQUE POR: https://seudominio.com.br
+   OU: https://www.seudominio.com.br
+   (Use o domínio EXATO onde seu site estará hospedado)
+
+⚠️ IMPORTANTE: As credenciais do MySQL JÁ ESTÃO CORRETAS!
+   DB_HOST=localhost
+   DB_USER=faceso56_suporte
+   DB_PASSWORD=qI08Psb59vVEbHQSiZk8AN234
+   DB_NAME=faceso56_wats
+   ✅ NÃO PRECISA MUDAR NADA!
+
+
+B. FRONTEND (.env)
+------------------
+Arquivo: .env (raiz do projeto)
+
+✏️ EDITE A LINHA 2:
+
+ANTES:
+   VITE_API_URL=http://localhost:3001/api
+
+DEPOIS:
+   VITE_API_URL=https://seudominio.com.br/api
+   OU: https://api.seudominio.com.br/api
+   (Depende de onde você hospedar o backend - veja Etapa 3)
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 3: FAZER BUILD DO FRONTEND
+═══════════════════════════════════════════════════════════════════
+
+1. Abra o terminal/PowerShell
+2. Navegue até a pasta do projeto:
+   cd "c:\Users\Tony Gomes\Downloads\pulse-blast-main"
+
+3. Execute o build:
+   npm run build
+
+4. Isso criará a pasta "dist/" com os arquivos otimizados
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 4: UPLOAD DOS ARQUIVOS
+═══════════════════════════════════════════════════════════════════
+
+OPÇÃO A: FRONTEND E BACKEND NO MESMO DOMÍNIO
+---------------------------------------------
+
+FRONTEND:
+1. Entre no cPanel → Gerenciador de Arquivos
+2. Vá para: public_html/
+3. Faça upload de TODOS os arquivos da pasta "dist/"
+   (NÃO envie a pasta dist, apenas o CONTEÚDO dela)
+
+BACKEND:
+1. Crie uma pasta: public_html/api/
+2. Faça upload de TODA a pasta "backend/" para dentro de "api/"
+3. Estrutura final:
+   public_html/
+   ├── index.html (do frontend)
+   ├── assets/
+   └── api/
+       ├── database/
+       ├── middleware/
+       ├── routes/
+       ├── .env
+       ├── package.json
+       └── server.js
+
+
+OPÇÃO B: BACKEND EM SUBDOMÍNIO (RECOMENDADO)
+---------------------------------------------
+
+1. No cPanel, crie um subdomínio: api.seudominio.com.br
+2. Anote a pasta do subdomínio (ex: /home/user/api.seudominio.com.br)
+3. Faça upload da pasta "backend/" para a raiz do subdomínio
+4. Frontend vai para public_html/ (igual Opção A)
+
+Neste caso, o VITE_API_URL será:
+   VITE_API_URL=https://api.seudominio.com.br/api
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 5: CONFIGURAR NODE.JS NA HOSTGATOR
+═══════════════════════════════════════════════════════════════════
+
+1. No cPanel, procure por "Setup Node.js App" ou "Node.js Selector"
+
+2. Clique em "Create Application"
+
+3. Preencha:
+   - Node.js version: 18.x ou superior
+   - Application mode: Production
+   - Application root: /home/seu_usuario/public_html/api
+     (ou o caminho do subdomínio)
+   - Application URL: seudominio.com.br/api
+     (ou api.seudominio.com.br)
+   - Application startup file: server.js
+   - Environment variables:
+     Adicione cada variável do arquivo .env manualmente:
+     * DB_HOST=localhost
+     * DB_USER=faceso56_suporte
+     * DB_PASSWORD=qI08Psb59vVEbHQSiZk8AN234
+     * DB_NAME=faceso56_wats
+     * DB_PORT=3306
+     * JWT_SECRET=<sua-chave-segura>
+     * PORT=3001
+     * NODE_ENV=production
+     * FRONTEND_URL=https://seudominio.com.br
+
+4. Clique em "Create"
+
+5. Na listagem de aplicações, clique em "Run NPM Install"
+   (Isso instalará as dependências do package.json)
+
+6. Após a instalação, clique em "Start" ou "Restart"
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 6: CONFIGURAR .HTACCESS (IMPORTANTE!)
+═══════════════════════════════════════════════════════════════════
+
+FRONTEND (.htaccess na public_html):
+------------------------------------
+Crie ou edite: public_html/.htaccess
+
+Cole este conteúdo:
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Redireciona para HTTPS
+  RewriteCond %{HTTPS} off
+  RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+  
+  # React Router - redireciona tudo para index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ /index.html [L]
+</IfModule>
+
+
+BACKEND (.htaccess na public_html/api):
+---------------------------------------
+Crie: public_html/api/.htaccess
+
+Cole este conteúdo:
+
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /api/
+  
+  # Proxy para Node.js
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ http://localhost:3001/api/$1 [P,L]
+</IfModule>
+
+═══════════════════════════════════════════════════════════════════
+ETAPA 7: TESTAR A APLICAÇÃO
+═══════════════════════════════════════════════════════════════════
+
+1. Teste o backend:
+   Acesse: https://seudominio.com.br/api/health
+   Deve retornar: {"status":"OK","message":"Server is running"}
+
+2. Teste o frontend:
+   Acesse: https://seudominio.com.br
+   Deve carregar a página de login
+
+3. Teste o cadastro:
+   - Clique em "Cadastro"
+   - Crie uma conta
+   - Faça login
+
+4. Se tudo funcionar, está pronto! 🎉
+
+═══════════════════════════════════════════════════════════════════
+RESOLUÇÃO DE PROBLEMAS
+═══════════════════════════════════════════════════════════════════
+
+ERRO: "Cannot connect to database"
+→ Verifique as credenciais no .env
+→ Confirme que as tabelas foram criadas no phpMyAdmin
+
+ERRO: "CORS policy blocked"
+→ Verifique FRONTEND_URL no backend/.env
+→ Certifique-se de usar o domínio EXATO (com ou sem www)
+
+ERRO: "API not found" ou 404
+→ Verifique se o Node.js app está rodando no cPanel
+→ Confira o .htaccess do backend
+→ Verifique VITE_API_URL no frontend/.env
+
+ERRO: "Invalid token" ou "Token expired"
+→ Limpe o localStorage do navegador
+→ Faça logout e login novamente
+
+Backend não inicia:
+→ Verifique os logs no cPanel → Node.js → View Logs
+→ Confirme que npm install foi executado
+→ Verifique se package.json está na pasta correta
+
+═══════════════════════════════════════════════════════════════════
+RESUMO RÁPIDO
+═══════════════════════════════════════════════════════════════════
+
+✅ CHECKLIST:
+
+[ ] 1. Executar schema.sql no phpMyAdmin
+[ ] 2. Editar backend/.env (JWT_SECRET e FRONTEND_URL)
+[ ] 3. Editar .env do frontend (VITE_API_URL)
+[ ] 4. Executar: npm run build
+[ ] 5. Upload pasta dist/ para public_html/
+[ ] 6. Upload pasta backend/ para public_html/api/
+[ ] 7. Configurar Node.js App no cPanel
+[ ] 8. Criar .htaccess no frontend e backend
+[ ] 9. Testar /api/health
+[ ] 10. Testar login no frontend
+
+═══════════════════════════════════════════════════════════════════
+
+⚠️ IMPORTANTE: 
+- Guarde bem o JWT_SECRET que você criar
+- Não compartilhe o arquivo .env com ninguém
+- Faça backup do banco de dados regularmente
+
+🆘 SUPORTE:
+Se encontrar problemas, verifique:
+1. Logs do Node.js no cPanel
+2. Console do navegador (F12)
+3. Aba Network no DevTools
+
+Boa sorte! 🚀
